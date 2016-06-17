@@ -1,0 +1,30 @@
+{
+  "name": "random-dose",
+  "version": "1.0.0",
+  "description": "a list of random items from unread pocket collection",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/annavester/random-dose.git"
+  },
+  "author": "Anna Vester",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/annavester/random-dose/issues"
+  },
+  "homepage": "https://github.com/annavester/random-dose",
+  "dependencies": {
+    "ejs": "^2.3.1",
+    "express": "~4.9.x",
+    "socket.io": "^1.4.5"
+  },
+  "engines": {
+    "node": "0.12.2"
+  },
+  "devDependencies": {
+    "socket.io": "^1.4.5"
+  }
+}

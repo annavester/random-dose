@@ -6,30 +6,32 @@ var io = require('socket.io')(server);
 var consumer_key = process.env.POCKET_KEY;
 var access_token = process.env.POCKET_TOKEN;
 
-server.listen(8080);
-
 io.on('connection', function (socket) {
     console.log("io connection");
 
     socket.on('delete article', function(itemId) {
         console.log('deleting article: ', itemId);
         var url = 'https://getpocket.com/v3/send?actions=%5B%7B%22action%22%3A%22delete' +
-            '%22%2C%22item_id%22%3A'+itemId+'%7D%5D&access_token=' + access_token +
-            '&consumer_key='+consumer_key;
-
+         '%22%2C%22item_id%22%3A'+itemId+'%7D%5D&access_token=' + access_token +
+         '&consumer_key='+consumer_key;
         console.log(url);
         request.post(url, {
-            consumer_key: consumer_key,
-            access_token: access_token,
-            actions: [
-                { action: "delete", item_id: itemId }
-            ]
+            headers: {'content-type':'application/json'},
+            body: JSON.stringify({
+                consumer_key: consumer_key,
+                access_token: access_token,
+                actions: [
+                    {action: "delete", item_id: itemId, time: new Date().getTime()}
+                ]
+            })
         }).on('error', function(err) {
             console.log("Error: ", err);
         }).on('response', function(response) {
             console.log(response.statusCode) // 200
             console.log(response.headers['content-type'])
         }).pipe(request.get("http://localhost:8080/"));
+    }, function() {
+        console.log(arguments);
     });
 });
 
@@ -56,26 +58,30 @@ app.get('/', function(req, resp) {
         body: JSON.stringify({
             consumer_key: consumer_key,
             access_token: access_token,
-            detailType: "complete",
-            contentType: "article"
+            detailType: "complete"
         })
     }, function (err, res, body) {
-        var sortable = [];
+        var articles = [], random = [], sorted = [];
         body = JSON.parse(body).list;
-        //console.log("There are: " + Object.keys(body).length + " articles");
-        //console.log(body);
 
-        for (var article in body)
-            sortable.push([article, body[article]])
-        //console.log(sortable);
-        sortable.sort(function(a, b) {
+        for (var article in body) {
+            articles.push([article, body[article]]);
+        }
+
+        random = getRandom(articles, 10);
+
+        sorted = random.sort(function(a, b) {
             return a[1].word_count - b[1].word_count;
         });
 
-        //console.log(sortable[0]);
-        // body is the parsed JSON response
         resp.render("pages/index", {
-            articles: getRandom(sortable, 10)
+            articles: sorted,
+            articlesCount: articles.length
         })
     });
+});
+
+
+server.listen(8080, function() {
+    console.log("running on port 8080");
 });

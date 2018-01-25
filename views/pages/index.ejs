@@ -1,38 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <% include ../partials/head %>
 </head>
+
 <body class="container">
-<main>
-    <div class="modal"></div>
-    <div class="jumbotron">
-        <p>Articles count: <%= articlesCount %></p>
-        <ol>
-        <%  for (var i = 0; i < articles.length; i++) {
+    <main>
+        <div class="modal"></div>
+        <div class="jumbotron">
+            <p>Articles count:
+                <%= articlesCount %>
+            </p>
+            <ol>
+                <%  for (var i = 0; i < articles.length; i++) {
             var article = articles[i][1], hasVideo = false;
             //console.log("article: ", article);
             if (parseInt(article.has_video, 10)) {
                 hasVideo = true;
             }
         %>
-            <li><% if (hasVideo) { %> VIDEO <% }%><a target="_blank" href="<%= article.resolved_url %>"><%= article.given_title %></a>
-                - <%= article.word_count %> -
-                <a href="https://getpocket.com/a/read/<%= article.item_id %>" target="_blank">View on pocket</a><!-- -
-                <a class="delete-article" title="<%= article.given_title %>" data-id="<%= article.item_id %>">Delete</a>--></li>
-        <% } %>
-        </ol>
-    </div>
-</main>
-<footer>
-    <% include ../partials/footer %>
-</footer>
+                    <li>
+                        <% if (hasVideo) { %> VIDEO
+                            <% }%>
+                                <a target="_blank" href="<%= article.resolved_url %>">
+                                    <%= article.given_title %>
+                                </a>
+                                -
+                                <%= article.word_count %> -
+                                    <a href="https://getpocket.com/a/read/<%= article.item_id %>" target="_blank">View on pocket</a> -
+                                    <a style="cursor: pointer" class="delete-article" title="<%= article.given_title %>" data-id="<%= article.item_id %>">Delete</a>
+                    </li>
+                    <% } %>
+            </ol>
+        </div>
+    </main>
+    <footer>
+        <% include ../partials/footer %>
+    </footer>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         var socket = io('http://localhost:8080');
         var deleteLinks = document.querySelectorAll(".delete-article");
         for (var i = 0; i < deleteLinks.length; i++) {
-            deleteLinks[i].addEventListener('click', function(event) {
+            deleteLinks[i].addEventListener('click', function (event) {
                 if (!confirm("Are you sure that you want to delete " + this.title + "?")) {
                     event.preventDefault();
                 } else {
@@ -41,4 +52,5 @@
             });
         }</script>
 </body>
+
 </html>

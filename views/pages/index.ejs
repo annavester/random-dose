@@ -48,6 +48,7 @@
                     event.preventDefault();
                 } else {
                     socket.emit('delete article', this.getAttribute("data-id"));
+                    event.target.parentElement.remove();
                 }
             });
         }</script>
